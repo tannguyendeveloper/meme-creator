@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="/src/css/semantic/semantic.css">
+    <link rel="stylesheet" type="text/css" href="/src/css/style.css">
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="ui container">
+            <form id="meme-text-form" class="ui form">
+                <div class="ui stackable grid">
+                    <div class="row">
+                        <div class="column">
+                            <header>
+                                <h1>Meme Creator</h1>
+                                <p>Create your own Memes</p>
+                            </header>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="column field">
+                            <div class="ui placeholder segment" style="margin-top: 0">
+                                <div id="select-image-button" class="ui primary button">Select Image</div>
+                                <canvas id="meme-canvas">
+
+                                </canvas>
+                            </div>
+                            <div id="action-buttons" class="controller-btns hidden">
+                                <button id="reselect-image-button" class="ui small compact button" type="button"><i class="upload icon"></i> Select Another Image</button>
+                                <button id="toggle-options-button" class="ui small compact button" type="button"><i class="cogs icon"></i>Text Options</button>
+                                <button id="reset-canvas-button" class="ui small compact button" type="button"><i class="undo icon"></i>Reset</button>
+                                <button id="download-image-button" class=" ui small compact right floated positive button" type="button"><i class="download icon"> </i>Download
+                                    Image</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="column">
+                            <div class="field">
+                                <label>Upper Text</label>
+                                <input id="upper-text" type="text" class="ui input" placeholder="Upper Text">
+                            </div>
+                            <div class="field">
+                                <label>Lower Text</label>
+                                <input id="lower-text" type="text" class="ui input" placeholder="Lower Text">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="options" class="ui stackable grid hidden">
+                    <div class="three column row">
+                        <div class="column field">
+                            <a name="options"></a>
+                            <label>Font Face</label>
+                            <select id="font-face" class="ui small input">
+                                <option value="Impact">Impact</option>
+                                <option value="Comic Sans MS">Comic Sans</option>
+                            </select>
+                        </div>
+                        <div class="column field">
+                            <label>Font Size <label class="display" data-type="font-size" style="float: right"><span>36</span>px</label></label>
+                            <input id="font-size" step="8" type="range" min="16" max="128" class="ui input" value="36">
+                        </div>
+                        <div class="column field">
+                            <label>Outline Size <label class="display" data-type="stroke-weight" style="float: right"><span>5</span>px</label></label>
+                            <input id="stroke-weight" step="1" type="range" min="0" max="20" class="ui input" value="5">
+                        </div>
+                    </div>
+                    <div class="three column row">
+                        <div class="column field">
+                            <label>Color</label>
+                            <select id="text-color" class="ui small input" value="">
+                                <option value="black">Black</option>
+                                <option value="white">White</option>
+                            </select>
+                        </div>
+                        <div class="column field">
+                            <label>Text Align</label>
+                            <select id="text-align" class="ui small input" value="">
+                                <option value="center">Center</option>
+                                <option value="left">Left</option>
+                                <option value="right">Right</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="/src/css/semantic/semantic.min.js"></script>
+    <script type="module" src="/src/js/MemeCreator.js"></script>
+</body>
+
+</html>
