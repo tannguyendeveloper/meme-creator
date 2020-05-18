@@ -32,16 +32,13 @@ export default class FileSelectionModal {
         const urlSubmitBtn = document.getElementById("submit-url-btn");
         urlSubmitBtn.addEventListener('click', async (e) => {
             const imageUrl = document.getElementById('image-url-input').value
-            try {
-                let result = await MemeCreatorInstance.canvas.setImage(imageUrl);
-                if(result) { 
-                    this.close();
-                }
-                else {
-                    this.handleUrlError();
-                }
-            } catch(e) {
+            let result = await this.isImageValid(imageUrl);
+            if(!result) { 
                 this.handleUrlError();
+            } else { 
+                MemeCreatorInstance.showActionButtons();
+                MemeCreatorInstance.showZoomControl();
+                this.close();
             }
         })
     }
@@ -72,14 +69,31 @@ export default class FileSelectionModal {
                 reader.addEventListener("load", async () => {
                     // convert image file to base64 string
                     let dataURI = reader.result;
-                    MemeCreatorInstance.canvas.setImage(dataURI);
+                    let result = await this.isImageValid(dataURI);
+                    if(!result) { 
+                        this.handleUrlError();
+                    } else { 
+                        MemeCreatorInstance.showActionButtons();
+                        MemeCreatorInstance.showZoomControl();
+                    }
                 }, false);
                 let dataURI = await reader.readAsDataURL(hiddenFileInput.files[0]);
             } else {
+                MemeCreatorInstance.hideActionButtons();
+                MemeCreatorInstance.hideZoomControls();
                 hiddenFileInput.value = '';
             }
             this.close();
         })
+    }
+
+    async isImageValid(imageUrl) {
+        try {
+            const result = await MemeCreatorInstance.canvas.setImage(imageUrl);
+            return !!result;
+        } catch(e) {
+            MemeCreatorInstance.hideActionButtons();
+        }
     }
 
     renderFileSelectionForm() {

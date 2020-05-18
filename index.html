@@ -22,17 +22,28 @@
 
                     <div class="row">
                         <div class="column field">
-                            <div class="ui placeholder segment" style="margin-top: 0">
+                            <div class="ui placeholder center aligned segment" style="margin-top: 0">
                                 <div id="select-image-button" class="ui primary button">Select Image</div>
                                 <canvas id="meme-canvas">
 
                                 </canvas>
+                                <div id="zoom-controls" class="ui basic left aligned segment hidden" style="margin: 0 0; padding-bottom: 0">
+                                    <div class="field">
+                                        <input id="zoom-range" type="range" placeholder="Search..."
+                                            class="ui input item zoom" min="50" max="200" value="100">
+                                        <label>Zoom <label class="display" data-type="zoom-range"
+                                            style="float: right"><span>100</span>%</label></label>
+                                    </div>
+                                </div>
                             </div>
                             <div id="action-buttons" class="controller-btns hidden">
-                                <button id="reselect-image-button" class="ui small compact button" type="button"><i class="upload icon"></i> Select Another Image</button>
-                                <button id="toggle-options-button" class="ui small compact button" type="button"><i class="cogs icon"></i>Text Options</button>
-                                <button id="reset-canvas-button" class="ui small compact button" type="button"><i class="undo icon"></i>Reset</button>
-                                <button id="download-image-button" class=" ui small compact right floated positive button" type="button"><i class="download icon"> </i>Download
+                                <button id="reselect-image-button" class="ui small compact button" type="button"><i
+                                        class="upload icon"></i> Select Another Image</button>
+                                <button id="reset-canvas-button" class="ui small compact button" type="button"><i
+                                        class="undo icon"></i>Reset</button>
+                                <button id="download-image-button"
+                                    class=" ui small compact right floated positive button" type="button"><i
+                                        class="download icon"> </i>Download
                                     Image</button>
                             </div>
                         </div>
@@ -50,6 +61,10 @@
                         </div>
                     </div>
                 </div>
+                <div class="ui hidden divider"></div>
+                <button id="toggle-options-button" class="ui small compact button" type="button"><i
+                        class="cogs icon"></i>Text Options</button>
+                <div class="ui hidden divider"></div>
                 <div id="options" class="ui stackable grid hidden">
                     <div class="three column row">
                         <div class="column field">
@@ -61,11 +76,13 @@
                             </select>
                         </div>
                         <div class="column field">
-                            <label>Font Size <label class="display" data-type="font-size" style="float: right"><span>36</span>px</label></label>
+                            <label>Font Size <label class="display" data-type="font-size"
+                                    style="float: right"><span>36</span>px</label></label>
                             <input id="font-size" step="8" type="range" min="16" max="128" class="ui input" value="36">
                         </div>
                         <div class="column field">
-                            <label>Outline Size <label class="display" data-type="stroke-weight" style="float: right"><span>5</span>px</label></label>
+                            <label>Outline Size <label class="display" data-type="stroke-weight"
+                                    style="float: right"><span>5</span>px</label></label>
                             <input id="stroke-weight" step="1" type="range" min="0" max="20" class="ui input" value="5">
                         </div>
                     </div>
@@ -89,6 +106,8 @@
                 </div>
             </form>
         </div>
+        <a href="https://github.com/tannguyendeveloper/meme-creator" id="github-link" class="ui circular icon button"><i
+                class="github icon"></i></a>
     </div>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"
         integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>

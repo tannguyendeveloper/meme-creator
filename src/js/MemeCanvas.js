@@ -1,10 +1,13 @@
 import MemeCreatorInstance from './MemeCreator.js';
+import MemeCanvasOffsetController from './MemeCanvasOffsetController.js';
+
 // const MemeCreatorInstance = MemeCreatorInstance;
 export default class MemeCanvas {
     constructor(id) {
         this.id = id;
-        this.canvas = document.getElementById(this.id);
-        this.context = this.canvas.getContext('2d');
+        this.element = document.getElementById(this.id);
+        this.context = this.element.getContext('2d');
+        this.offsetController = new MemeCanvasOffsetController(this);
     }
 
     getLines(text) {
@@ -16,7 +19,7 @@ export default class MemeCanvas {
         for (var i = 1; i < words.length; i++) {
             var word = words[i];
             var width = this.context.measureText(currentLine + " " + word).width;
-            if (width < this.canvas.width) {
+            if (width < this.element.width) {
                 currentLine += " " + word;
             } else {
                 lines.push(currentLine);
@@ -29,9 +32,11 @@ export default class MemeCanvas {
 
     async setImage(dataURI) {
         const result =  new Promise((resolve, reject) => {
+            this.imageDataURI = dataURI;
             let image = new Image;
             image.crossOrigin = 'anonymous';
             image.src = dataURI;
+            image.offset = {x: 0, y: 0}; 
             image.addEventListener('load', async () => {
                 const selectImageButton = document.getElementById('select-image-button');
                 selectImageButton.style.display = 'none';
@@ -40,13 +45,11 @@ export default class MemeCanvas {
                     image.width = 960;
                     image.height = 960 * ratio;
                 }
-                this.canvas.width = image.width;
-                this.canvas.height = image.height;
-                this.canvas.style.display = 'block';
+                this.element.width = image.width;
+                this.element.height = image.height;
+                this.element.style.display = 'block';
                 this.context.drawImage(image, 0, 0, image.width, image.height);
                 this.image = image;
-                MemeCreatorInstance.showActionButtons();
-                this.drawImage(MemeCreatorInstance.getUpperText(), MemeCreatorInstance.getLowerText(), MemeCreatorInstance.getOptions());
                 resolve(true);
             });
             try {
@@ -62,7 +65,7 @@ export default class MemeCanvas {
     }
 
     clear() {
-        this.context.clearRect(0,0,this.canvas.width, this.canvas.height);
+        this.context.clearRect(0,0,this.element.width, this.element.height);
     }
 
     setContextOptions(options) {
@@ -75,9 +78,9 @@ export default class MemeCanvas {
         this.context.lineWidth = options.strokeWeight;
         this.context.offsetX =  this.context.textAlign === "left" ? 
                                     0 :
-                                this.canvas.width && this.context.textAlign === "center" ? 
-                                    Math.floor(this.canvas.width/2) :
-                                    this.canvas.width;
+                                this.element.width && this.context.textAlign === "center" ? 
+                                    Math.floor(this.element.width/2) :
+                                    this.element.width;
     }
 
     renderUpperText(text) {
@@ -94,18 +97,29 @@ export default class MemeCanvas {
         if(!text) return false;
         const lines = this.getLines(text);
         lines.reverse().forEach((value, i) => {
-            const offsetY = this.canvas.height - (parseInt(this.context.fontSize) * i + parseInt(this.context.fontSize/3));
+            const offsetY = this.element.height - (parseInt(this.context.fontSize) * i + parseInt(this.context.fontSize/3));
             this.context.strokeText(value, this.context.offsetX, offsetY);    
             this.context.fillText(value, this.context.offsetX, offsetY);  
         })
     }
 
-    drawImage(upperText, lowerText, options) {
+    renderCanvas(upperText, lowerText, options) {
+        const canvasWidth = this.element.width;
+        const canvasHeight = this.element.height;
+        const imageWidth = Math.floor(this.image.width * options.zoom) / 100;
+        const imageHeight = Math.floor(this.image.height * options.zoom) / 100;
+        const offset = {
+            x: (canvasWidth - imageWidth)/2 + this.image.offset.x,
+            y: (canvasHeight - imageHeight)/2 + this.image.offset.y
+        }
+        // this.image.offset = offset;
         this.context.save();
+        this.clear();
         this.setContextOptions(options);
-        if(this.image) this.context.drawImage(this.image, 0, 0, this.image.width, this.image.height);
+        this.context.drawImage(this.image, offset.x, offset.y, imageWidth, imageHeight);
         this.renderUpperText(upperText);
         this.renderLowerText(lowerText);
         this.context.restore();
+
     }
 }

@@ -9,6 +9,16 @@ canvas {
     max-width: 100%;
     margin: 0 auto;
     display: none;
+    border: 1px solid #cdcdcd;
+    background-color: #ffffff;
+}
+
+canvas:hover {
+    cursor: grab;
+}
+
+canvas.grabbing:hover {
+    cursor: grabbing
 }
 
 input[type="range"] {
@@ -40,7 +50,13 @@ input[type="range"]::-moz-range-thumb {
     cursor: pointer; /* Cursor on hover */
 }
 
-#action-buttons.hidden, #options.hidden {
+#action-buttons.hidden, #options.hidden, #zoom-controls.hidden {
     display: none;
 }
   
+#github-link {
+    position: fixed;
+    font-size: 1.5rem;
+    bottom: 1em;
+    right: 1em;
+}

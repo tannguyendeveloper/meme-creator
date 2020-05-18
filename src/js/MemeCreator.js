@@ -25,12 +25,14 @@ class MemeCreator {
         const textColor = document.getElementById('text-color').value;
         const textAlign = document.getElementById('text-align').value;
         const strokeWeight = document.getElementById('stroke-weight').value;
+        const zoom = parseInt(document.getElementById('zoom-range').value);
         return {
             fontSize,
             fontFace,
             textColor,
             textAlign,
-            strokeWeight
+            strokeWeight,
+            zoom
         }
     }
 
@@ -39,11 +41,23 @@ class MemeCreator {
         actionButtons.classList.add('hidden');
     }
 
-
     showActionButtons() {
         const actionButtons = document.getElementById('action-buttons');
+        console.log(actionButtons)
+        actionButtons.classList.remove('hidden');
+        console.log(actionButtons.classList)
+    }
+
+    hideZoomControls() {
+        const actionButtons = document.getElementById('zoom-controls');
+        actionButtons.classList.add('hidden');
+    }
+
+    showZoomControl() {
+        const actionButtons = document.getElementById('zoom-controls');
         actionButtons.classList.remove('hidden');
     }
+
 
     hideOptions() {
         const options = document.getElementById('options');
@@ -51,7 +65,7 @@ class MemeCreator {
     }
 
     downloadImage() {
-        const dataURI = this.canvas.canvas.toDataURL('image/jpeg');
+        const dataURI = this.canvas.element.toDataURL('image/jpeg');
         const link = document.createElement('a');
         link.download = "meme.jpg";
         link.href= dataURI;
@@ -62,6 +76,10 @@ class MemeCreator {
     toggleOptionsDisplay() {
         const options = document.getElementById('options');
         options.classList.toggle('hidden');
+        document.querySelector('a[name="options"]').scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        })
     }
 
     resetOptionsValues() {
@@ -75,7 +93,7 @@ class MemeCreator {
     }
 
     handleInputChange() {        
-        this.canvas.drawImage(this.getUpperText(), this.getLowerText(), this.getOptions());
+        this.canvas.renderCanvas(this.getUpperText(), this.getLowerText(), this.getOptions());
     }
 
     handleRangeChange(e) {
@@ -91,13 +109,14 @@ class MemeCreator {
     reset() {
         const selectImageButton = document.getElementById('select-image-button');
         this.canvas.clear();
-        this.canvas.canvas.width = '';
-        this.canvas.canvas.height = '';
-        this.canvas.canvas.style.display = 'none';
+        this.canvas.element.width = '';
+        this.canvas.element.height = '';
+        this.canvas.element.style.display = 'none';
         selectImageButton.style.display = 'block';
         this.resetOptionsValues();
         this.hideOptions();
         this.hideActionButtons();
+        this.hideZoomControls();
     }
 
     initFunctions() {
@@ -107,15 +126,24 @@ class MemeCreator {
         const selects = document.querySelectorAll(`#meme-text-form select`);
         const selectImageButton = document.getElementById('select-image-button');
         const reselectImageButton = document.getElementById('reselect-image-button');
+        const zoomRangeInput = document.getElementById('zoom-range');
         const toggleOptionsButton = document.getElementById('toggle-options-button');
         const resetCanvasButton = document.getElementById('reset-canvas-button');
         const downloadImageButton = document.getElementById('download-image-button');
+
+        this.canvas.element.addEventListener('mousedown', _this.handleCanvasDragStart.bind(this));
+        this.canvas.element.addEventListener('mouseup', _this.handleCanvasDragEnd.bind(this));
+        this.canvas.element.addEventListener('mouseout', _this.handleCanvasDragEnd.bind(this));
+
 
         selectImageButton.addEventListener('click', this.handleSelectImageBtnClick);
         reselectImageButton.addEventListener('click', this.handleSelectImageBtnClick);
         toggleOptionsButton.addEventListener('click', this.toggleOptionsDisplay);
         resetCanvasButton.addEventListener('click', this.reset.bind(this));
         downloadImageButton.addEventListener('click', _this.downloadImage.bind(this));
+        
+        // zoomRangeInput.addEventListener('input', this.handleInputChange.bind(this));
+
 
         bindElementsWithFn(inputs, 'keyup', function() { _this.handleInputChange() })        
         bindElementsWithFn(ranges, 'input', function(e) { 
@@ -124,6 +152,25 @@ class MemeCreator {
         })
         bindElementsWithFn(selects, 'change', function() { _this.handleInputChange() })
     }
+
+    handleCanvasDragStart(e) {
+        //initial mouse coordinates
+        this.canvas.offsetController.canvasDragStart(e);
+        this.canvas.element.classList.add('grabbing');
+        this.handleCanvasDragOver = this.handleCanvasDragOver.bind(this);
+        this.canvas.element.addEventListener('mousemove', this.handleCanvasDragOver)
+    }
+
+    handleCanvasDragOver(e) {
+        this.canvas.offsetController.canvasDragOver(e);
+        this.canvas.renderCanvas(this.getUpperText(), this.getLowerText(), this.getOptions());
+    }
+
+    handleCanvasDragEnd(e) {
+        this.canvas.element.classList.remove('grabbing');
+        this.canvas.element.removeEventListener('mousemove', this.handleCanvasDragOver);
+    }
+
 }
 
 const bindElementsWithFn = function(elements, event, fn) {
@@ -133,5 +180,5 @@ const bindElementsWithFn = function(elements, event, fn) {
 }
 
 const MemeCreatorInstance = new MemeCreator('meme-canvas');
-
+// MemeCreatorInstance.canvas.setImage('https://s.yimg.com/uu/api/res/1.2/Aa31UERVelNJUpRjFRX2dw--~B/Zmk9c3RyaW07aD0yOTk7cHlvZmY9MDtxPTk1O3c9NTczO3NtPTE7YXBwaWQ9eXRhY2h5b24-/https://s.yimg.com/lo/api/res/1.2/nzTjhxM61IN78SzHrqlxMw--~C/Y2g9MTQ2MS4wNDUyNTg2MjA2ODk1O2NyPTE7Y3c9MjU4ODtkeD0wO2R5PTMzNC41NTgxODk2NTUxNzI0O2ZpPXVsY3JvcDs7YXBwaWQ9cHJvZGVzazI-/https://s.yimg.com/os/creatr-images/2020-02/70f41820-5283-11ea-bfdb-b41888e3676f.cf.webp');
 export default MemeCreatorInstance;
