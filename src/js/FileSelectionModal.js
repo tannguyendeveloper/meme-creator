@@ -79,8 +79,8 @@ export default class FileSelectionModal {
                 }, false);
                 let dataURI = await reader.readAsDataURL(hiddenFileInput.files[0]);
             } else {
-                MemeCreatorInstance.hideActionButtons();
-                MemeCreatorInstance.hideZoomControls();
+                // MemeCreatorInstance.hideActionButtons();
+                // MemeCreatorInstance.hideZoomControls();
                 hiddenFileInput.value = '';
             }
             this.close();
