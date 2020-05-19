@@ -115,17 +115,16 @@ class MemeCreator {
                 // convert image file to base64 string
                 let dataURI = reader.result;
                 let result = await this.isImageValid(dataURI);
-                if(!result) { 
-                    this.handleUrlError();
-                } else { 
+                if(result) {
                     this.showActionButtons();
                     this.showZoomControl();
+                    this.handleInputChange();
                 }
             }, false);
             let dataURI = await reader.readAsDataURL(e.target.files[0]);
         } else {
-            this.hideActionButtons();
-            this.hideZoomControls();
+            // this.hideActionButtons();
+            // this.hideZoomControls();
             e.target.value = '';
         }
     }
