@@ -90,6 +90,7 @@ class MemeCreator {
         document.getElementById('text-color').value = 'black';
         document.getElementById('text-align').value = 'center';
         document.getElementById('stroke-weight').value = 5;
+        document.getElementById('zoom-range').value = 100;
     }
 
     handleInputChange() {        
@@ -103,9 +104,41 @@ class MemeCreator {
     }
 
     handleSelectImageBtnClick() {
-        const modal = new FileSelectionModal();
+        const hiddenFileInput = document.getElementById('file-input');
+        hiddenFileInput.click();
     }
-    
+
+    async handleOnFileChange(e) {
+        if(e.target.value) {
+            const reader = new FileReader();
+            reader.addEventListener("load", async () => {
+                // convert image file to base64 string
+                let dataURI = reader.result;
+                let result = await this.isImageValid(dataURI);
+                if(!result) { 
+                    this.handleUrlError();
+                } else { 
+                    this.showActionButtons();
+                    this.showZoomControl();
+                }
+            }, false);
+            let dataURI = await reader.readAsDataURL(e.target.files[0]);
+        } else {
+            this.hideActionButtons();
+            this.hideZoomControls();
+            e.target.value = '';
+        }
+    }
+
+    async isImageValid(imageUrl) {
+        try {
+            const result = await this.canvas.setImage(imageUrl);
+            return !!result;
+        } catch(e) {
+            MemeCreatorInstance.hideActionButtons();
+        }
+    }
+
     reset() {
         const selectImageButton = document.getElementById('select-image-button');
         this.canvas.clear();
@@ -130,7 +163,8 @@ class MemeCreator {
         const toggleOptionsButton = document.getElementById('toggle-options-button');
         const resetCanvasButton = document.getElementById('reset-canvas-button');
         const downloadImageButton = document.getElementById('download-image-button');
-
+        const hiddenFileInput = document.getElementById('file-input');
+        
         this.canvas.element.addEventListener('mousedown', _this.handleCanvasDragStart.bind(this));
         this.canvas.element.addEventListener('mouseup', _this.handleCanvasDragEnd.bind(this));
         this.canvas.element.addEventListener('mouseout', _this.handleCanvasDragEnd.bind(this));
@@ -141,7 +175,8 @@ class MemeCreator {
         toggleOptionsButton.addEventListener('click', this.toggleOptionsDisplay);
         resetCanvasButton.addEventListener('click', this.reset.bind(this));
         downloadImageButton.addEventListener('click', _this.downloadImage.bind(this));
-        
+        hiddenFileInput.addEventListener('change', this.handleOnFileChange.bind(this));
+
         // zoomRangeInput.addEventListener('input', this.handleInputChange.bind(this));
 
 
