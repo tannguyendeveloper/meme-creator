@@ -35,8 +35,6 @@ export default class MemeCanvas {
             this.imageDataURI = dataURI;
             let image = new Image;
             image.crossOrigin = 'anonymous';
-            image.src = dataURI;
-            image.offset = {x: 0, y: 0}; 
             image.addEventListener('load', async () => {
                 const selectImageButton = document.getElementById('select-image-button');
                 selectImageButton.style.display = 'none';
@@ -49,9 +47,11 @@ export default class MemeCanvas {
                 this.element.height = image.height;
                 this.element.style.display = 'block';
                 this.context.drawImage(image, 0, 0, image.width, image.height);
+                image.offset = {x: 0, y: 0}; 
                 this.image = image;
                 resolve(true);
             });
+            image.src = dataURI;
             try {
                 image.addEventListener('error', async () => {
                     this.image = false;
